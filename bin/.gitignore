@@ -2,3 +2,5 @@
 /controller/
 /repository/
 /views/
+/exceptions/
+/utils/
