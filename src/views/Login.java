@@ -4,6 +4,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import model.Usuario;
+import repository.UsuarioRepository;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -192,7 +196,7 @@ public class Login extends JFrame {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Login();
+				efetuarLogin();;
 			}
 		});
 		btnLogin.setBackground(SystemColor.textHighlight);
@@ -234,16 +238,23 @@ public class Login extends JFrame {
 		header.setLayout(null);
 	}
 	
-	private void Login() {
-		 String Usuario= "admin";
-	     String Senha="admin";
+	@SuppressWarnings("deprecation")
+	private void efetuarLogin() {
+		 
+		    Usuario usuario = new Usuario();
+		    UsuarioRepository repository = new UsuarioRepository();
+		    
+		    String inputUsuario = txtUsuario.getText();
+			String inputSenha = String.valueOf(txtSenha.getPassword());
 
-	        String senhaa=new String (txtSenha.getPassword());
+		   
+			   usuario = repository.buscarPorLogin(inputUsuario, inputSenha);
 
-	        if(txtUsuario.getText().equals(Usuario) && senhaa.equals(Senha)){
+	        if(usuario.getLogin() != null && usuario.getSenha() != null){
 	            MenuUsuario menu = new MenuUsuario();
 	            menu.setVisible(true);
-	            dispose();	 
+	            dispose();
+	        
 	        }else {
 	            JOptionPane.showMessageDialog(this, "Usuario ou Senha não válidos");
 	        }
