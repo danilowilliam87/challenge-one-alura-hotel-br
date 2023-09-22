@@ -2,9 +2,9 @@ package model;
 
 public enum FormaPagamento {
 	
-	DINHEIRO("DINHEIRO"),
-	DEBITO("DEBITO"),
-	CREDITO("CREDITO");
+	DINHEIRO("Dinheiro"),
+	DEBITO("Cartão de Débito"),
+	CREDITO("Cartão de Crédito");
 
 	private String formaPagamento;
 

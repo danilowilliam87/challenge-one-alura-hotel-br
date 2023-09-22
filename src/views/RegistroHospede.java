@@ -7,6 +7,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
+
+import model.Reserva;
+import servicos.ReservaService;
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
@@ -38,6 +42,8 @@ public class RegistroHospede extends JFrame {
 	private JLabel labelExit;
 	private JLabel labelAtras;
 	int xMouse, yMouse;
+	private Reserva reserva;
+	
 
 	/**
 	 * Launch the application.
@@ -236,6 +242,8 @@ public class RegistroHospede extends JFrame {
 		contentPane.add(lblNumeroReserva);
 		
 		txtNreserva = new JTextField();
+		txtNreserva.setEditable(false);
+		
 		txtNreserva.setFont(new Font("Roboto", Font.PLAIN, 16));
 		txtNreserva.setBounds(560, 495, 285, 33);
 		txtNreserva.setColumns(10);
@@ -284,6 +292,8 @@ public class RegistroHospede extends JFrame {
 		btnsalvar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				System.out.println("Reserva na view de hospedes : " + reserva);
+				txtNreserva.setText(String.valueOf(reserva.getId()));
 			}
 		});
 		btnsalvar.setLayout(null);
@@ -326,5 +336,19 @@ public class RegistroHospede extends JFrame {
 	        int y = evt.getYOnScreen();
 	        this.setLocation(x - xMouse, y - yMouse);
 }
+
+		public Reserva getReserva() {
+			return reserva;
+		}
+
+		public void setReserva(Reserva reserva) {
+			this.reserva = reserva;
+		}
+
+		public void obterId(Long id) {
+			txtNreserva.setText(id.toString());
+		}
+	    
+	    
 											
 }

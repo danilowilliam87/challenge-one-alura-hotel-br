@@ -1,13 +1,24 @@
 package utils;
 
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Date;
+
+import exceptions.DateUtilsException;
 
 public class DateUtils {
 	
-	@SuppressWarnings("deprecation")
 	public static Date converterData(LocalDate date) {
-		return new Date(date.getDayOfMonth(), date.getMonthValue(), date.getYear());
+		if(date == null) {
+			throw new DateUtilsException("data nula ou inválida");
+		}
+		return Date.valueOf(date);
+	}
+	
+	public static LocalDate converterData(Date date) {
+		if(date == null) {
+			throw new DateUtilsException("data nula ou inválida");
+		}
+		return date.toLocalDate();
 	}
 
 }
