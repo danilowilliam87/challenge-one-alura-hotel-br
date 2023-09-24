@@ -1,12 +1,28 @@
 package views;
 
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 
 import model.FormaPagamento;
@@ -15,25 +31,6 @@ import model.Reserva;
 import servicos.HospedesService;
 import servicos.ReservaService;
 import utils.DateUtils;
-
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ImageIcon;
-import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.Font;
-import javax.swing.JTabbedPane;
-import java.awt.Toolkit;
-import javax.swing.SwingConstants;
-import javax.swing.JSeparator;
-import javax.swing.ListSelectionModel;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @SuppressWarnings("serial")
 public class Buscar extends JFrame {
@@ -244,8 +241,8 @@ public class Buscar extends JFrame {
 						
 						} catch (Exception e2) {
 							
+							modeloHospedes.setRowCount(0);
                             Hospede hospede = hospedesService.buscarPorSobreNome(argumentoDeBusca);
-                            modeloHospedes.setRowCount(0);
                             modeloHospedes.addRow(new Object[] {
                             		hospede.getId().toString(),
                             		hospede.getNome(),
@@ -311,22 +308,33 @@ public class Buscar extends JFrame {
 					}
 				    
 				}else if(flagConsulta.equals("hospedes")) {
-					int linhaSelecionada = tbHospedes.getSelectedRow();
-					String idHospede = (String) tbReservas.getValueAt(linhaSelecionada, 0);
-					String nomeDoHospede = (String) tbReservas.getValueAt(linhaSelecionada, 1);
-					String sobrenomeHospede = (String) tbReservas.getValueAt(linhaSelecionada, 2);
-					String dataNascimentoHospede = (String) tbReservas.getValueAt(linhaSelecionada, 3);
-					String nacionalidadeHospede = (String) tbReservas.getValueAt(linhaSelecionada, 4);
-					String telefoneHospede = (String) tbReservas.getValueAt(linhaSelecionada, 5);
-					String idReservaHospede = (String) tbReservas.getValueAt(linhaSelecionada, 6);
-					Reserva reserva = new Reserva(Long.parseLong(idReservaHospede));
-					Hospede hospede = new Hospede(Long.parseLong(idHospede),
-							nomeDoHospede, 
-							sobrenomeHospede, 
-							LocalDate.parse(dataNascimentoHospede),
-							nacionalidadeHospede, 
-							telefoneHospede,
-							reserva);
+					try {
+						int linhaSelecionada = tbHospedes.getSelectedRow();
+						String idHospede = (String) tbHospedes.getValueAt(linhaSelecionada, 0);
+						String nomeDoHospede = (String) tbHospedes.getValueAt(linhaSelecionada, 1);
+						String sobrenomeHospede = (String) tbHospedes.getValueAt(linhaSelecionada, 2);
+						String dataNascimentoHospede = (String) tbHospedes.getValueAt(linhaSelecionada, 3);
+						String nacionalidadeHospede = (String) tbHospedes.getValueAt(linhaSelecionada, 4);
+						String telefoneHospede = (String) tbHospedes.getValueAt(linhaSelecionada, 5);
+						String idReservaHospede = (String) tbHospedes.getValueAt(linhaSelecionada, 6);
+						Reserva reserva = new Reserva(Long.parseLong(idReservaHospede));
+						Hospede hospede = new Hospede(Long.parseLong(idHospede),
+								nomeDoHospede, 
+								sobrenomeHospede, 
+								LocalDate.parse(dataNascimentoHospede),
+								nacionalidadeHospede, 
+								telefoneHospede,
+								reserva);
+						if(hospedesService.atualizarHospedes(hospede)) {
+							Sucesso sucesso = new Sucesso();
+							sucesso.setVisible(true);
+						}else {
+							JOptionPane.showMessageDialog(null, "Erro ao atualizar hospede");
+						}
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(null, "não há linha selecionada");
+					}
 					
 				}
 			}

@@ -2,15 +2,12 @@ package repository;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.toedter.calendar.DateUtil;
 
 import exceptions.RepositoryException;
 import model.FormaPagamento;
@@ -20,7 +17,7 @@ import utils.DateUtils;
 
 public class HospedesRepository {
 
-	public Long efetuarReserva(Hospede hospede) {
+	public Long salvarHospede(Hospede hospede) {
 
 		Long idReserva = null;
 
@@ -54,7 +51,7 @@ public class HospedesRepository {
 			}
 			return -1L;
 		} catch (Exception e) {
-			throw new RepositoryException("Erro ao efetuar reserva");
+			throw new RepositoryException("Erro ao salvar hospede");
 		}
 	}
 
@@ -64,12 +61,11 @@ public class HospedesRepository {
 		try {
 			Connection connection = FabricaConexao.abrirConexao();
 			String sqlUpdate = "UPDATE hospedes SET "
-					+ "nome = ? " 
-			        + "sobrenome = ? " 
-					+ "data_nascimento = ? "
-					+ "nacionalidade = ? "
-					+ "telefone = ? "
-					+ "reserva_id = ? " 
+					+ "nome = ?, " 
+			        + "sobrenome = ?, " 
+					+ "data_nascimento = ?, "
+					+ "nacionalidade = ?, "
+					+ "telefone = ? " 
 					+ "	WHERE id = ? ";
 			try (PreparedStatement ps = connection.prepareStatement(sqlUpdate)) {
 
@@ -78,7 +74,7 @@ public class HospedesRepository {
 				ps.setDate(3, DateUtils.converterData(hospede.getDataNascimento()));
 				ps.setString(4, hospede.getNacionalidade());
 				ps.setString(5, hospede.getTelefone());
-				ps.setLong(6, hospede.getReserva().getId());
+				ps.setLong(6, hospede.getId());
 				linhasAfetadas = ps.executeUpdate();
 
 			} catch (Exception e) {

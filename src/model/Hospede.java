@@ -15,8 +15,6 @@ public class Hospede {
 	private String telefone;
 	private Reserva reserva;
 
-	
-	
 
 	public Hospede() {
 		super();
@@ -41,6 +39,7 @@ public class Hospede {
 	public Hospede(Long id, String nome, String sobrenome, LocalDate dataNascimento, String nacionalidade,
 			String telefone, Reserva reserva) {
 		super();
+		validar(nome, sobrenome, dataNascimento, nacionalidade, telefone, id);
 		this.id = id;
 		this.nome = nome;
 		this.sobrenome = sobrenome;
