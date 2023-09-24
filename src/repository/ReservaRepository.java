@@ -27,6 +27,8 @@ public class ReservaRepository {
 					+ "VALUES (?,?,?,?);";
 			try (PreparedStatement ps = connection.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS)) {
 
+				
+				
 				ps.setDate(1, (Date) DateUtils.converterData(reserva.getDataEntrada()));
 				ps.setDate(2, (Date) DateUtils.converterData(reserva.getDataSaida()));
 				ps.setBigDecimal(3, reserva.getValor());
@@ -56,15 +58,16 @@ public class ReservaRepository {
 		int linhasAfetadas = 0;
 		try {
 			Connection connection = FabricaConexao.abrirConexao();
-			String sqlUpdate = "UPDATE  reservas SET data_entrada = ?" + "data_saida = ?" + "valor = ?"
-					+ "forma_pagamento" + "	WHERE id = ?";
+			String sqlUpdate = "UPDATE  reservas SET  data_saida = ?, " 
+			                  + "valor = ?, "
+					          + "forma_pagamento = ? " 
+			                  + "WHERE id = ?";
 			try (PreparedStatement ps = connection.prepareStatement(sqlUpdate)) {
 
-				ps.setDate(1, (Date) DateUtils.converterData(reserva.getDataEntrada()));
-				ps.setDate(2, (Date) DateUtils.converterData(reserva.getDataSaida()));
-				ps.setBigDecimal(3, reserva.getValor());
-				ps.setString(4, reserva.getFormaPagamento().toString());
-				ps.setLong(5, id);
+				ps.setDate(1, (Date) DateUtils.converterData(reserva.getDataSaida()));
+				ps.setBigDecimal(2, reserva.getValor());
+				ps.setString(3, reserva.getFormaPagamento().toString());
+				ps.setLong(4, id);
 				linhasAfetadas = ps.executeUpdate();
 
 			} catch (Exception e) {
@@ -80,12 +83,15 @@ public class ReservaRepository {
 		int linhasAfetadas = 0;
 		try {
 			Connection connection = FabricaConexao.abrirConexao();
-			String sqlUpdate = "DELETE FROM reservas WHERE id = ?";
-			try (PreparedStatement ps = connection.prepareStatement(sqlUpdate)) {
-
+			String sqlDelete = "DELETE FROM reservas WHERE id = ?";
+			String sqlDeleteHospede = "DELETE FROM hospedes WHERE reserva_id = ?";
+			try (PreparedStatement ps = connection.prepareStatement(sqlDelete);
+					PreparedStatement ps2 = connection.prepareStatement(sqlDeleteHospede)) {
 				ps.setLong(1, id);
-				linhasAfetadas = ps.executeUpdate();
-
+				ps2.setLong(1, id);
+				if(ps2.executeUpdate() > 0) {
+					linhasAfetadas = ps.executeUpdate();
+				}
 			} catch (Exception e) {
 				System.err.print("Erro ao executar comando sql");
 			}

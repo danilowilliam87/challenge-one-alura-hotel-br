@@ -20,5 +20,15 @@ public class DateUtils {
 		}
 		return date.toLocalDate();
 	}
+	
+	public static LocalDate converter(String date) {
+		if(date == null) {
+			throw new DateUtilsException("data nula ou inválida");
+		}
+		
+		return LocalDate.parse(date);
+	}
+	
+	
 
 }

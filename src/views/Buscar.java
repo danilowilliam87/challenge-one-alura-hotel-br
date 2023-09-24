@@ -5,12 +5,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 
+import model.FormaPagamento;
 import model.Hospede;
 import model.Reserva;
 import servicos.HospedesService;
 import servicos.ReservaService;
+import utils.DateUtils;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -28,6 +32,8 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @SuppressWarnings("serial")
 public class Buscar extends JFrame {
@@ -43,6 +49,7 @@ public class Buscar extends JFrame {
 	int xMouse, yMouse;
 	private HospedesService hospedesService = new HospedesService();
 	private ReservaService reservaService = new ReservaService();
+	private String flagConsulta = "";
 
 	/**
 	 * Launch the application.
@@ -97,6 +104,7 @@ public class Buscar extends JFrame {
 		tbReservas = new JTable();
 		tbReservas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbReservas.setFont(new Font("Roboto", Font.PLAIN, 16));
+
 		modelo = (DefaultTableModel) tbReservas.getModel();
 		modelo.addColumn("Numero de Reserva");
 		modelo.addColumn("Data Check In");
@@ -219,16 +227,19 @@ public class Buscar extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String argumentoDeBusca = txtBuscar.getText();
+				modelo.setRowCount(0);
+				
 				if(argumentoDeBusca != null && argumentoDeBusca.length() > 0) {
                      try {
 						try {
 							Long reservaId = Long.parseLong(argumentoDeBusca);
 							Reserva reserva = reservaService.consultarReserva(reservaId);
-							modelo.addRow(new Object[] {reserva.getId(), 
-									reserva.getDataEntrada(),
-									reserva.getDataSaida(),
-									reserva.getValor(),
-									reserva.getFormaPagamento()});
+							modelo.addRow(new Object[] {reserva.getId().toString(), 
+									reserva.getDataEntrada().toString(),
+									reserva.getDataSaida().toString(),
+									reserva.getValor().toString(),
+									reserva.getFormaPagamento().toString().toUpperCase()});
+							flagConsulta = "reserva";
 						
 						} catch (Exception e2) {
                             Hospede hospede = hospedesService.buscarPorSobreNome(argumentoDeBusca);							
@@ -260,6 +271,35 @@ public class Buscar extends JFrame {
 		btnEditar.setBackground(new Color(12, 138, 199));
 		btnEditar.setBounds(635, 508, 122, 35);
 		btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+		btnEditar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(flagConsulta.equals("reserva")) {
+					int indiceLinhaSelecionada = tbReservas.getSelectedRow();
+					
+					String id = (String) tbReservas.getValueAt(indiceLinhaSelecionada, 0);
+					String dataCheckin = (String)tbReservas.getValueAt(indiceLinhaSelecionada, 1);
+					String dataCheckout = (String)tbReservas.getValueAt(indiceLinhaSelecionada, 2);
+					String formaPagamento = (String) tbReservas.getValueAt(indiceLinhaSelecionada, 4);
+					BigDecimal valorAtualizado = reservaService.calcularTotalReserva(DateUtils.converter(dataCheckin), 
+							DateUtils.converter(dataCheckout));
+					Reserva reserva = new Reserva(
+							Long.parseLong(id), 
+							DateUtils.converter(dataCheckin), 
+							DateUtils.converter(dataCheckout), 
+						    valorAtualizado, 
+						    FormaPagamento.valueOf(formaPagamento.toUpperCase()));
+					
+					if(reservaService.atualizarReserva(reserva.getId(), reserva)) {
+						Sucesso sucesso = new Sucesso();
+						sucesso.setVisible(true);
+					}else {
+						JOptionPane.showMessageDialog(null, "Erro ao atualizar reserva");
+					}
+				    
+				}
+			}
+		});
 		contentPane.add(btnEditar);
 		
 		JLabel lblEditar = new JLabel("EDITAR");
@@ -274,6 +314,22 @@ public class Buscar extends JFrame {
 		btnDeletar.setBackground(new Color(12, 138, 199));
 		btnDeletar.setBounds(767, 508, 122, 35);
 		btnDeletar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+		btnDeletar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(flagConsulta.equals("reserva")) {
+					int indiceLinhaSelecionada = tbReservas.getSelectedRow();
+					String id = (String) tbReservas.getValueAt(indiceLinhaSelecionada, 0);
+					
+					if(reservaService.excluirReserva(Long.parseLong(id))){
+						JOptionPane.showMessageDialog(null, "registro excluido");
+					}else {
+						JOptionPane.showMessageDialog(null, "Erro ao excluir");
+					}
+				    
+				}
+			}
+		});
 		contentPane.add(btnDeletar);
 		
 		JLabel lblExcluir = new JLabel("DELETAR");
