@@ -8,7 +8,9 @@ import javax.swing.JTextField;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
 
+import model.Hospede;
 import model.Reserva;
+import servicos.HospedesService;
 import servicos.ReservaService;
 
 import javax.swing.JComboBox;
@@ -24,6 +26,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.text.Format;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import javax.swing.SwingConstants;
@@ -43,6 +48,8 @@ public class RegistroHospede extends JFrame {
 	private JLabel labelAtras;
 	int xMouse, yMouse;
 	private Reserva reserva;
+	private Date dataDeNascimento = new Date();
+	private HospedesService hospedesService = new HospedesService();
 	
 
 	/**
@@ -292,8 +299,15 @@ public class RegistroHospede extends JFrame {
 		btnsalvar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("Reserva na view de hospedes : " + reserva);
-				txtNreserva.setText(String.valueOf(reserva.getId()));
+				System.out.println("salvando hospede.....");
+				String nome = txtNome.getText();
+				String sobrenome = txtSobrenome.getText();
+				String telefone = txtTelefone.getText();
+				String nacionalidade = txtNacionalidade.getSelectedItem().toString();
+				dataDeNascimento = txtDataN.getDate();
+				LocalDate nascimento = dataDeNascimento.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				Hospede hospede = new Hospede(nome, sobrenome, nascimento, nacionalidade, telefone, reserva);
+				hospedesService.salvarHospede(hospede);
 			}
 		});
 		btnsalvar.setLayout(null);

@@ -349,7 +349,8 @@ public class ReservasView extends JFrame {
 					}
                     ReservaService service = new ReservaService();
                     Long idReserva = service.criarReserva(reserva);
-					registro.obterId(idReserva);
+                    reserva.setId(idReserva);
+                    registro.obterId(reserva.getId());
                     registro.setReserva(reserva);
 					registro.setVisible(true);
 				} else {

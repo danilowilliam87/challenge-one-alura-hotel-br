@@ -1,8 +1,4 @@
-/model/
-/controller/
-/repository/
 /views/
-/exceptions/
-/utils/
 /servicos/
-/testes/
+/model/
+/repository/

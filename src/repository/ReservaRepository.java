@@ -56,7 +56,7 @@ public class ReservaRepository {
 		int linhasAfetadas = 0;
 		try {
 			Connection connection = FabricaConexao.abrirConexao();
-			String sqlUpdate = "UPDATE  reserva SET data_entrada = ?" + "data_saida = ?" + "valor = ?"
+			String sqlUpdate = "UPDATE  reservas SET data_entrada = ?" + "data_saida = ?" + "valor = ?"
 					+ "forma_pagamento" + "	WHERE id = ?";
 			try (PreparedStatement ps = connection.prepareStatement(sqlUpdate)) {
 
@@ -80,7 +80,7 @@ public class ReservaRepository {
 		int linhasAfetadas = 0;
 		try {
 			Connection connection = FabricaConexao.abrirConexao();
-			String sqlUpdate = "DELETE FROM reserva WHERE id = ?";
+			String sqlUpdate = "DELETE FROM reservas WHERE id = ?";
 			try (PreparedStatement ps = connection.prepareStatement(sqlUpdate)) {
 
 				ps.setLong(1, id);
