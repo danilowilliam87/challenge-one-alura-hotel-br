@@ -6,11 +6,19 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import model.Hospede;
+import model.Reserva;
+import servicos.HospedesService;
+import servicos.ReservaService;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -33,6 +41,8 @@ public class Buscar extends JFrame {
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	int xMouse, yMouse;
+	private HospedesService hospedesService = new HospedesService();
+	private ReservaService reservaService = new ReservaService();
 
 	/**
 	 * Launch the application.
@@ -208,7 +218,28 @@ public class Buscar extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				String argumentoDeBusca = txtBuscar.getText();
+				if(argumentoDeBusca != null && argumentoDeBusca.length() > 0) {
+                     try {
+						try {
+							Long reservaId = Long.parseLong(argumentoDeBusca);
+							Reserva reserva = reservaService.consultarReserva(reservaId);
+							modelo.addRow(new Object[] {reserva.getId(), 
+									reserva.getDataEntrada(),
+									reserva.getDataSaida(),
+									reserva.getValor(),
+									reserva.getFormaPagamento()});
+						
+						} catch (Exception e2) {
+                            Hospede hospede = hospedesService.buscarPorSobreNome(argumentoDeBusca);							
+						}
+					} catch (Exception e2) {
+						JOptionPane.showMessageDialog(null, "Erro ao realizar consulta");
+					}					
+					
+				}else {
+					JOptionPane.showMessageDialog(null, "informe o argumento de busca");
+				}
 			}
 		});
 		btnbuscar.setLayout(null);

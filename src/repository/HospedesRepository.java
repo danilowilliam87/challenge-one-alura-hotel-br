@@ -144,7 +144,7 @@ public class HospedesRepository {
 		return hospedes;
 	}
 	
-	public Hospede consultarReserva(Long id) {
+	public Hospede consultarHospede(Long id) {
 		Connection connection = FabricaConexao.abrirConexao();
 		String sqlSelect = "SELECT h.* FROM hospedes h inner join reservas r on (h.reserva_id = r.id) WHERE ID = ?";
 		try (PreparedStatement ps = connection.prepareStatement(sqlSelect)) {
@@ -152,6 +152,42 @@ public class HospedesRepository {
 			try (ResultSet rs = ps.executeQuery()){
 				Hospede hospedes2 = new Hospede();
 				while(rs.next()) {
+					String nome = rs.getString("h.nome");
+					String sobrenome = rs.getString("h.sobrenome");
+					LocalDate dataNascimento = DateUtils.converterData(rs.getDate("h.data_nascimento"));
+					String nacionalidade = rs.getString("h.nacionalidade");
+					String telefone = rs.getString("h.telefone");
+					Long idReserva = rs.getLong("h.reserva_id");
+					LocalDate dataEntrada = DateUtils.converterData(rs.getDate("r.data_entrada"));
+					LocalDate dataSaida = DateUtils.converterData(rs.getDate("r.data_saida"));
+					BigDecimal valorReserva = rs.getBigDecimal("r.valor");
+					String formaPagamento = rs.getString("r.forma_pagamento");
+					Reserva reserva = new Reserva(dataEntrada, dataSaida, valorReserva, FormaPagamento.valueOf(formaPagamento));
+					reserva.setId(idReserva);
+					hospedes2 = new Hospede(id, nome, sobrenome, dataNascimento, nacionalidade, telefone, reserva);
+				}
+				return hospedes2;
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.err.print("erro ao adicionar dados no objeto ");
+			}
+
+		} catch (Exception e) {
+			System.err.print("Erro ao executar comando sql");
+		}
+		return null;
+	}
+	
+	
+	public Hospede consultarHospedePorSobrenome(String inputSobrenome) {
+		Connection connection = FabricaConexao.abrirConexao();
+		String sqlSelect = "SELECT h.* FROM hospedes h inner join reservas r on (h.reserva_id = r.id) WHERE h.sobrenome = ?";
+		try (PreparedStatement ps = connection.prepareStatement(sqlSelect)) {
+			ps.setString(1, inputSobrenome);
+			try (ResultSet rs = ps.executeQuery()){
+				Hospede hospedes2 = new Hospede();
+				while(rs.next()) {
+					Long id = rs.getLong("h.id");
 					String nome = rs.getString("h.nome");
 					String sobrenome = rs.getString("h.sobrenome");
 					LocalDate dataNascimento = DateUtils.converterData(rs.getDate("h.data_nascimento"));

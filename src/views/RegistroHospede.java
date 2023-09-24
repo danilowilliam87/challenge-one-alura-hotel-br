@@ -307,7 +307,12 @@ public class RegistroHospede extends JFrame {
 				dataDeNascimento = txtDataN.getDate();
 				LocalDate nascimento = dataDeNascimento.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				Hospede hospede = new Hospede(nome, sobrenome, nascimento, nacionalidade, telefone, reserva);
-				hospedesService.salvarHospede(hospede);
+				Long idHospede = hospedesService.salvarHospede(hospede);
+				
+				if(idHospede > 0) {
+					Sucesso sucesso = new Sucesso();
+					sucesso.setVisible(true);
+				}
 			}
 		});
 		btnsalvar.setLayout(null);

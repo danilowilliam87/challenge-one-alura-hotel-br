@@ -36,6 +36,10 @@ public class Reserva {
 	public Reserva(Long id, LocalDate dataEntrada, LocalDate dataSaida, BigDecimal valor,
 			FormaPagamento formaPagamento) {
 		validarConstrutor(dataEntrada, dataSaida, valor);
+		this.id = id;
+		this.dataEntrada = dataEntrada;
+		this.dataSaida = dataSaida;
+		this.valor = valor;
 		this.formaPagamento = formaPagamento;
 	}
 

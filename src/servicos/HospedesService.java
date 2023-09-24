@@ -12,6 +12,9 @@ public class HospedesService {
 		return repository.efetuarReserva(hospede);
 	}
 	
+	public Hospede buscarPorSobreNome(String sobrenome) {
+		return repository.consultarHospedePorSobrenome(sobrenome);
+	}
 	
 
 }
