@@ -356,7 +356,7 @@ public class Buscar extends JFrame {
 		btnDeletar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(flagConsulta.equals("reserva")) {
+				if("reserva".equals(flagConsulta)) {
 					int indiceLinhaSelecionada = tbReservas.getSelectedRow();
 					String id = (String) tbReservas.getValueAt(indiceLinhaSelecionada, 0);
 					
@@ -366,6 +366,15 @@ public class Buscar extends JFrame {
 						JOptionPane.showMessageDialog(null, "Erro ao excluir");
 					}
 				    
+				}else if("hospedes".equals(flagConsulta)) {
+					int indiceLinhaSelecionada = tbHospedes.getSelectedRow();
+					String id = (String) tbHospedes.getValueAt(indiceLinhaSelecionada, 6);
+					
+					if(hospedesService.excluirHospedes(Long.parseLong(id))){
+						JOptionPane.showMessageDialog(null, "registro excluido");
+					}else {
+						JOptionPane.showMessageDialog(null, "Erro ao excluir");
+					}
 				}
 			}
 		});
