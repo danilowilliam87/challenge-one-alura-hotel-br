@@ -181,25 +181,20 @@ public class HospedesRepository {
 	
 	public Hospede consultarHospedePorSobrenome(String inputSobrenome) {
 		Connection connection = FabricaConexao.abrirConexao();
-		String sqlSelect = "SELECT h.* FROM hospedes h inner join reservas r on (h.reserva_id = r.id) WHERE h.sobrenome = ?";
+		String sqlSelect = "SELECT * FROM hospedes WHERE id = ?";
 		try (PreparedStatement ps = connection.prepareStatement(sqlSelect)) {
 			ps.setString(1, inputSobrenome);
 			try (ResultSet rs = ps.executeQuery()){
 				Hospede hospedes2 = new Hospede();
 				while(rs.next()) {
-					Long id = rs.getLong("h.id");
-					String nome = rs.getString("h.nome");
-					String sobrenome = rs.getString("h.sobrenome");
-					LocalDate dataNascimento = DateUtils.converterData(rs.getDate("h.data_nascimento"));
-					String nacionalidade = rs.getString("h.nacionalidade");
-					String telefone = rs.getString("h.telefone");
-					Long idReserva = rs.getLong("h.reserva_id");
-					LocalDate dataEntrada = DateUtils.converterData(rs.getDate("r.data_entrada"));
-					LocalDate dataSaida = DateUtils.converterData(rs.getDate("r.data_saida"));
-					BigDecimal valorReserva = rs.getBigDecimal("r.valor");
-					String formaPagamento = rs.getString("r.forma_pagamento");
-					Reserva reserva = new Reserva(dataEntrada, dataSaida, valorReserva, FormaPagamento.valueOf(formaPagamento));
-					reserva.setId(idReserva);
+					Long id = rs.getLong("id");
+					String nome = rs.getString("nome");
+					String sobrenome = rs.getString("sobrenome");
+					LocalDate dataNascimento = DateUtils.converterData(rs.getDate("data_nascimento"));
+					String nacionalidade = rs.getString("nacionalidade");
+					String telefone = rs.getString("telefone");
+					Long idReserva = rs.getLong("reserva_id");
+					Reserva reserva = new Reserva(idReserva);
 					hospedes2 = new Hospede(id, nome, sobrenome, dataNascimento, nacionalidade, telefone, reserva);
 				}
 				return hospedes2;

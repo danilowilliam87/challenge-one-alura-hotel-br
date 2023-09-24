@@ -32,6 +32,12 @@ public class Reserva {
 	}
 
 
+	
+
+	public Reserva(Long id) {
+		super();
+		this.id = id;
+	}
 
 	public Reserva(Long id, LocalDate dataEntrada, LocalDate dataSaida, BigDecimal valor,
 			FormaPagamento formaPagamento) {

@@ -227,11 +227,12 @@ public class Buscar extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String argumentoDeBusca = txtBuscar.getText();
-				modelo.setRowCount(0);
+				
 				
 				if(argumentoDeBusca != null && argumentoDeBusca.length() > 0) {
                      try {
 						try {
+							modelo.setRowCount(0);
 							Long reservaId = Long.parseLong(argumentoDeBusca);
 							Reserva reserva = reservaService.consultarReserva(reservaId);
 							modelo.addRow(new Object[] {reserva.getId().toString(), 
@@ -242,7 +243,19 @@ public class Buscar extends JFrame {
 							flagConsulta = "reserva";
 						
 						} catch (Exception e2) {
-                            Hospede hospede = hospedesService.buscarPorSobreNome(argumentoDeBusca);							
+							
+                            Hospede hospede = hospedesService.buscarPorSobreNome(argumentoDeBusca);
+                            modeloHospedes.setRowCount(0);
+                            modeloHospedes.addRow(new Object[] {
+                            		hospede.getId().toString(),
+                            		hospede.getNome(),
+                            		hospede.getSobrenome(),
+                            		hospede.getDataNascimento().toString(),
+                            		hospede.getNacionalidade(),
+                            		hospede.getTelefone(),
+                            		hospede.getReserva().getId().toString()
+                            });
+                            flagConsulta = "hospedes";
 						}
 					} catch (Exception e2) {
 						JOptionPane.showMessageDialog(null, "Erro ao realizar consulta");
@@ -297,6 +310,24 @@ public class Buscar extends JFrame {
 						JOptionPane.showMessageDialog(null, "Erro ao atualizar reserva");
 					}
 				    
+				}else if(flagConsulta.equals("hospedes")) {
+					int linhaSelecionada = tbHospedes.getSelectedRow();
+					String idHospede = (String) tbReservas.getValueAt(linhaSelecionada, 0);
+					String nomeDoHospede = (String) tbReservas.getValueAt(linhaSelecionada, 1);
+					String sobrenomeHospede = (String) tbReservas.getValueAt(linhaSelecionada, 2);
+					String dataNascimentoHospede = (String) tbReservas.getValueAt(linhaSelecionada, 3);
+					String nacionalidadeHospede = (String) tbReservas.getValueAt(linhaSelecionada, 4);
+					String telefoneHospede = (String) tbReservas.getValueAt(linhaSelecionada, 5);
+					String idReservaHospede = (String) tbReservas.getValueAt(linhaSelecionada, 6);
+					Reserva reserva = new Reserva(Long.parseLong(idReservaHospede));
+					Hospede hospede = new Hospede(Long.parseLong(idHospede),
+							nomeDoHospede, 
+							sobrenomeHospede, 
+							LocalDate.parse(dataNascimentoHospede),
+							nacionalidadeHospede, 
+							telefoneHospede,
+							reserva);
+					
 				}
 			}
 		});
